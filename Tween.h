@@ -14,10 +14,14 @@
 #include "TweenPath.h"
 #include "TweenEquations.h"
 #include "TweenPaths.h"
+#include <memory>
+#include <map>
 
 namespace TweenEngine
 {
-    typedef int (^Accessor)(int cmd, float *values);
+    typedef std::shared_ptr<void> TargetPtr;
+    typedef std::function<int(std::shared_ptr<void>, int tweenType, int cmd, float *values)> TweenAccessorFunc;
+    typedef std::shared_ptr<TweenAccessorFunc > TweenAccessor;
 
     class TweenPool;
     class TweenPoolCallback;
@@ -53,10 +57,13 @@ namespace TweenEngine
 
         //static TweenPoolCallback *poolCallback;
         static TweenPool &pool;
+        static std::map<int, TweenAccessor> registeredAccessors;
 
-        Accessor accessor;
+        std::shared_ptr<void> tweenTarget;
+        TweenAccessor accessor;
+        int type;
         
-        void setup(Accessor accessor, float duration);
+        void setup(TargetPtr target, int tweenType, float duration);
         
     protected:
         virtual void reset();
@@ -75,11 +82,13 @@ namespace TweenEngine
         
         static int getPoolSize();
         static void ensurePoolCapacity(int minCapacity);
-      
-        static Tween &to(Accessor accessor, float duration);
-        static Tween &from(Accessor accessor, float duration);
-        static Tween &set(Accessor accessor);
-        static Tween &call(TweenCallback &callback);
+
+        static void registerAccessor(int type, TweenAccessorFunc);
+
+        static Tween &to(TargetPtr target, int tweenType, float duration);
+        static Tween &from(TargetPtr target, int tweenType, float duration);
+        static Tween &set(TargetPtr target, int tweenType);
+        static Tween &call(TweenCallbackFunc callback);
         static Tween &mark();
         
         Tween();

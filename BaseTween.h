@@ -24,13 +24,16 @@
 #define __BaseTween__
 
 #include "TweenCallback.h"
+#include <memory>
 
 namespace TweenEngine
 {
     class TweenManager;
-    
+
     class BaseTween
     {
+        friend class Timeline;
+
     private:
         // General
         int step;
@@ -49,7 +52,7 @@ namespace TweenEngine
         bool isPausedFlag;      // true if pause() was called
         
         // Misc
-        TweenCallback *callback;
+        std::shared_ptr<TweenCallbackFunc > callback;
         int callbackTriggers;
         void *userData;
 
@@ -72,7 +75,7 @@ namespace TweenEngine
         virtual void forceToStart();
         virtual void forceToEnd(float time);
         
-        void callCallback(int type);
+        void callCallback(TweenCallbackType type);
         bool isReverse(int step);
         bool isValid(int step);
 
@@ -87,7 +90,7 @@ namespace TweenEngine
         bool isAutoStartEnabled;
 
         virtual BaseTween &build();
-        BaseTween &start();
+        virtual BaseTween &start();
         BaseTween &start(TweenManager &manager);
         BaseTween &delay(float delay);
         void kill();
@@ -96,8 +99,8 @@ namespace TweenEngine
         void resume();
         BaseTween &repeat(int count, float delay);
         BaseTween &repeatYoyo(int count, float delay);
-        BaseTween &setCallback(TweenCallback *callback);
-        BaseTween &setCallbackTriggers(int flags);
+        BaseTween &setCallback(TweenCallbackFunc callback);
+        BaseTween &setCallbackTriggers(TweenCallbackType flags);
         BaseTween &setUserData(void *data);
         
         // Getters

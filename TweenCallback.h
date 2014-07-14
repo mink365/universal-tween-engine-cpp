@@ -37,29 +37,28 @@
 #ifndef __TweenCallback__
 #define __TweenCallback__
 
+#include <functional>
+
 namespace TweenEngine
 {
     class BaseTween;
     
-    class TweenCallback
+    enum class TweenCallbackType
     {
-        
-    public:
-        static const int BEGIN = 0x01;
-        static const int START = 0x02;
-        static const int END = 0x04;
-        static const int COMPLETE = 0x08;
-        static const int BACK_BEGIN = 0x10;
-        static const int BACK_START = 0x20;
-        static const int BACK_END = 0x40;
-        static const int BACK_COMPLETE = 0x80;
-        static const int ANY_FORWARD = 0x0F;
-        static const int ANY_BACKWARD = 0xF0;
-        static const int ANY = 0xFF;
-        
-        virtual ~TweenCallback() {}
-        virtual void onEvent(int type, BaseTween *source) = 0;
+        BEGIN = 0x01,
+        START = 0x02,
+        END = 0x04,
+        COMPLETE = 0x08,
+        BACK_BEGIN = 0x10,
+        BACK_START = 0x20,
+        BACK_END = 0x40,
+        BACK_COMPLETE = 0x80,
+        ANY_FORWARD = 0x0F,
+        ANY_BACKWARD = 0xF0,
+        ANY = 0xFF,
     };
+
+    typedef std::function<void(TweenCallbackType type, BaseTween *source)> TweenCallbackFunc;
     
 }
 #endif /* defined(__TweenCallback__) */

@@ -23,8 +23,8 @@ namespace TweenEngine
 		delayStart = duration = repeatDelay = currentTime = deltaTime = 0;
 		isStartedFlag = isInitializedFlag = isFinishedFlag = isKilledFlag = isPausedFlag = false;
         
-		callback = NULL;
-		callbackTriggers = TweenCallback::COMPLETE;
+        callback = nullptr;
+        callbackTriggers = (int)TweenCallbackType::COMPLETE;
 		userData = NULL;
         
 		isAutoRemoveEnabled = isAutoStartEnabled = true;
@@ -170,9 +170,9 @@ namespace TweenEngine
 	 *
 	 * @see TweenCallback
 	 */
-	BaseTween &BaseTween::setCallback(TweenCallback *callback)
+    BaseTween &BaseTween::setCallback(TweenCallbackFunc callback)
     {
-		this->callback = callback;
+        this->callback = std::make_shared<TweenCallbackFunc>(callback);
 		return *this;
 	}
     
@@ -202,9 +202,9 @@ namespace TweenEngine
 	 * @param flags one or more triggers, separated by the '|' operator.
 	 * @see TweenCallback
 	 */
-	BaseTween &BaseTween::setCallbackTriggers(int flags)
+    BaseTween &BaseTween::setCallbackTriggers(TweenCallbackType flags)
     {
-		this->callbackTriggers = flags;
+        this->callbackTriggers = (int)flags;
 		return *this;
 	}
     
@@ -332,9 +332,11 @@ namespace TweenEngine
         else forceEndValues();
     }
     
-    void BaseTween::callCallback(int type)
+    void BaseTween::callCallback(TweenCallbackType type)
     {
-        if (callback != NULL && (callbackTriggers & type) > 0) callback->onEvent(type, this);
+        if (callback != nullptr && (callbackTriggers & (int)type) > 0) {
+            (*callback)(type, this);
+        }
     }
     
     bool BaseTween::isReverse(int step)
@@ -389,8 +391,8 @@ namespace TweenEngine
             step = 0;
             deltaTime -= delayStart-currentTime;
             currentTime = 0;
-            callCallback(TweenCallback::BEGIN);
-            callCallback(TweenCallback::START);
+            callCallback(TweenCallbackType::BEGIN);
+            callCallback(TweenCallbackType::START);
         }
     }
     
@@ -404,8 +406,8 @@ namespace TweenEngine
             float delta = 0-currentTime;
             deltaTime -= delta;
             currentTime = 0;
-            callCallback(TweenCallback::BEGIN);
-            callCallback(TweenCallback::START);
+            callCallback(TweenCallbackType::BEGIN);
+            callCallback(TweenCallbackType::START);
             updateOverride(step, step-1, isIterationStep, delta);
             
         }
@@ -417,8 +419,8 @@ namespace TweenEngine
             float delta = 0-currentTime;
             deltaTime -= delta;
             currentTime = duration;
-            callCallback(TweenCallback::BACK_BEGIN);
-            callCallback(TweenCallback::BACK_START);
+            callCallback(TweenCallbackType::BACK_BEGIN);
+            callCallback(TweenCallbackType::BACK_START);
             updateOverride(step, step+1, isIterationStep, delta);
         }
     }
@@ -438,7 +440,7 @@ namespace TweenEngine
                 
                 if (isReverse(step)) forceStartValues();
                 else forceEndValues();
-                callCallback(TweenCallback::BACK_START);
+                callCallback(TweenCallbackType::BACK_START);
                 updateOverride(step, step+1, isIterationStep, delta);
                 
             }
@@ -452,7 +454,7 @@ namespace TweenEngine
                 currentTime = 0;
                 
                 if (isReverse(step)) forceEndValues(); else forceStartValues();
-                callCallback(TweenCallback::START);
+                callCallback(TweenCallbackType::START);
                 updateOverride(step, step-1, isIterationStep, delta);
                 
             }
@@ -466,9 +468,9 @@ namespace TweenEngine
                 currentTime = 0;
                 
                 updateOverride(step, step+1, isIterationStep, delta);
-                callCallback(TweenCallback::BACK_END);
+                callCallback(TweenCallbackType::BACK_END);
                 
-                if (step < 0 && repeatCnt >= 0) callCallback(TweenCallback::BACK_COMPLETE);
+                if (step < 0 && repeatCnt >= 0) callCallback(TweenCallbackType::BACK_COMPLETE);
                 else currentTime = repeatDelay;
                 
             }
@@ -482,9 +484,9 @@ namespace TweenEngine
                 currentTime = duration;
                 
                 updateOverride(step, step-1, isIterationStep, delta);
-                callCallback(TweenCallback::END);
+                callCallback(TweenCallbackType::END);
                 
-                if (step > repeatCnt*2 && repeatCnt >= 0) callCallback(TweenCallback::COMPLETE);
+                if (step > repeatCnt*2 && repeatCnt >= 0) callCallback(TweenCallbackType::COMPLETE);
                 currentTime = 0;
                 
             }
