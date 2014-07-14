@@ -7,8 +7,8 @@
 
 #include "TweenPaths.h"
 
-#include "LinearPath.h"
-#include "CatmullRom.h"
+#include "paths/LinearPath.h"
+#include "paths/CatmullRom.h"
 
 namespace TweenEngine
 {
