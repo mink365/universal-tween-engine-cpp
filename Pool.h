@@ -14,6 +14,7 @@
 #define __Pool__
 
 #include <vector>
+#include <algorithm>
 
 namespace TweenEngine
 {
@@ -56,7 +57,7 @@ namespace TweenEngine
     template <typename T>
     T *Pool<T>::get()
     {
-		T *obj = NULL;
+        T *obj = nullptr;
         if (objects.empty())
         {
             obj = create();
@@ -65,22 +66,22 @@ namespace TweenEngine
         {
             obj = objects.back();
             objects.pop_back();
-            if (obj == NULL) obj = create();
+            if (obj == nullptr) obj = create();
         }
-		if (callback != NULL) callback->onUnPool(obj);
+        if (callback != nullptr) callback->onUnPool(obj);
 		return obj;
 	}
     
     template <typename T>
 	void  Pool<T>::free(T *obj)
     {
-		if (obj == NULL) return;
+        if (obj == nullptr) return;
         
         bool contains = (std::find(objects.begin(), objects.end(), obj) != objects.end());
         
 		if (!contains)
         {
-			if (callback != NULL) callback->onPool(obj);
+            if (callback != nullptr) callback->onPool(obj);
 			objects.push_back(obj);
 		}
 	}

@@ -20,11 +20,35 @@ namespace TweenEngine
         obj->reset();
     }
     
-    TweenPool::TweenPool() : Pool<TweenEngine::Tween>(20, new TweenPoolCallback())
+    TweenPool::TweenPool()
+        : Pool<TweenEngine::Tween>(20, new TweenPoolCallback())
     {
     }
     
-    Tween *TweenPool::create() { return new Tween(); }
+    Tween *TweenPool::create() {
+        return new Tween();
+    }
+
+    Timeline *TimelinePool::create()
+    {
+        return new Timeline();
+    }
+
+    TimelinePool::TimelinePool()
+        : Pool<TweenEngine::Timeline>(20, new TimelinePoolCallback())
+    {
+
+    }
+
+    void TimelinePoolCallback::onPool(Timeline *obj)
+    {
+
+    }
+
+    void TimelinePoolCallback::onUnPool(Timeline *obj)
+    {
+
+    }
 
     //TweenPoolCallback *Tween::poolCallback = new TweenPoolCallback();
     //TweenPool *Tween::pool = new TweenPool(20, Tween::poolCallback);

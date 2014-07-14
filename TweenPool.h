@@ -10,6 +10,7 @@
 
 #include "Pool.h"
 #include "Tween.h"
+#include "Timeline.h"
 
 namespace TweenEngine
 {
@@ -27,6 +28,22 @@ namespace TweenEngine
     public:
         TweenPool();
         
+    };
+
+    class TimelinePoolCallback : public PoolCallback<Timeline>
+    {
+    public:
+        void onPool(Timeline *obj);
+        void onUnPool(Timeline *obj);
+    };
+
+    class TimelinePool : public Pool<Timeline>
+    {
+    protected:
+        Timeline *create();
+    public:
+        TimelinePool();
+
     };
 }
 #endif /* defined(__TweenPool__) */
