@@ -349,15 +349,17 @@ namespace TweenEngine
     {
         assert(duration >= 0);
         
-        if (registeredAccessors.count(type) > 0) {
-            this->accessor = registeredAccessors[type];
-        }
-        // -1 is default null, but we need to check the other type
-
         this->tweenTarget = target;
         this->type = tweenType;
 
 		this->duration = duration;
+
+        if (registeredAccessors.count(type) > 0) {
+            this->accessor = registeredAccessors[type];
+        } else {
+//            assert(false);
+            // -1 is default null, but we need to check the other type
+        }
     }
    
     // -------------------------------------------------------------------------
@@ -676,6 +678,10 @@ namespace TweenEngine
 
     Tween &Tween::build()
     {
+        if (tweenTarget == nullptr) {
+            return *this;
+        }
+
         if (accessor != NULL)
         {
             combinedAttrsCnt = (*accessor)(tweenTarget, type, ACCESSOR_READ, accessorBuffer);
@@ -684,10 +690,16 @@ namespace TweenEngine
 		return *this;
 	}
     
-	void Tween::free() { pool.free(this); }
+    void Tween::free() {
+        pool.free(this);
+    }
     
 	void Tween::initializeOverride()
     {
+        if (tweenTarget == nullptr) {
+            return;
+        }
+
         (*accessor)(tweenTarget, type, ACCESSOR_READ, startValues);
         
 		for (int i=0; i<combinedAttrsCnt; i++) {
@@ -775,11 +787,19 @@ namespace TweenEngine
 
 	void Tween::forceStartValues()
     {
+        if (tweenTarget == nullptr) {
+            return;
+        }
+
         (*accessor)(tweenTarget, type, ACCESSOR_WRITE, startValues);
 	}
     
 	void Tween::forceEndValues()
     {
+        if (tweenTarget == nullptr) {
+            return;
+        }
+
         (*accessor)(tweenTarget, type, ACCESSOR_WRITE, targetValues);
     }
     

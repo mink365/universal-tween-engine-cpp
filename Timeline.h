@@ -18,6 +18,8 @@ class TimelinePoolCallback;
 
 class Timeline : public BaseTween
 {
+    friend class TimelinePoolCallback;
+
 private:
     std::vector<BaseTween *> children;
     Timeline* current;

@@ -57,7 +57,7 @@ Timeline &Timeline::createParallel()
 
 Timeline &Timeline::push(Tween &tween)
 {
-    assert(isBuilt);
+    assert(!isBuilt);
 //    if (isBuilt) throw new RuntimeException("You can't push anything to a timeline once it is started");
     current->children.push_back(&tween);
     return *this;
@@ -67,8 +67,8 @@ Timeline &Timeline::push(Timeline &timeline)
 {
 //    if (isBuilt) throw new RuntimeException("You can't push anything to a timeline once it is started");
 //    if (timeline.current != timeline) throw new RuntimeException("You forgot to call a few 'end()' statements in your pushed timeline");
-    assert(isBuilt);
-    assert(timeline.current != &timeline);
+    assert(!isBuilt);
+    assert(timeline.current == &timeline);
 
     timeline.parent = current;
     current->children.push_back(&timeline);
@@ -77,7 +77,7 @@ Timeline &Timeline::push(Timeline &timeline)
 
 Timeline &Timeline::pushPause(float time)
 {
-    assert(isBuilt);
+    assert(!isBuilt);
 //    if (isBuilt) throw new RuntimeException("You can't push anything to a timeline once it is started");
     current->children.push_back(&Tween::mark().delay(time));
     return *this;
@@ -85,7 +85,7 @@ Timeline &Timeline::pushPause(float time)
 
 Timeline &Timeline::beginSequence()
 {
-    assert(isBuilt);
+    assert(!isBuilt);
 //    if (isBuilt) throw new RuntimeException("You can't push anything to a timeline once it is started");
     Timeline& tl = *(pool.get());
     tl.parent = current;
@@ -97,7 +97,7 @@ Timeline &Timeline::beginSequence()
 
 Timeline &Timeline::beginParallel()
 {
-    assert(isBuilt);
+    assert(!isBuilt);
 //    if (isBuilt) throw new RuntimeException("You can't push anything to a timeline once it is started");
     Timeline& tl = *(pool.get());
     tl.parent = current;
@@ -109,8 +109,8 @@ Timeline &Timeline::beginParallel()
 
 Timeline &Timeline::end()
 {
-    assert(isBuilt);
-    assert(current == this);
+    assert(!isBuilt);
+    assert(current != this);
 //    if (isBuilt) throw new RuntimeException("You can't push anything to a timeline once it is started");
 //    if (current == this) throw new RuntimeException("Nothing to end...");
     current = current->parent;

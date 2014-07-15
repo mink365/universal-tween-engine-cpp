@@ -7,6 +7,7 @@
 
 #include "TweenPool.h"
 #include "Tween.h"
+#include "Timeline.h"
 
 namespace TweenEngine
 {
@@ -29,6 +30,16 @@ namespace TweenEngine
         return new Tween();
     }
 
+    void TimelinePoolCallback::onPool(Timeline *obj)
+    {
+        obj->reset();
+    }
+
+    void TimelinePoolCallback::onUnPool(Timeline *obj)
+    {
+        obj->reset();
+    }
+
     Timeline *TimelinePool::create()
     {
         return new Timeline();
@@ -39,25 +50,4 @@ namespace TweenEngine
     {
 
     }
-
-    void TimelinePoolCallback::onPool(Timeline *obj)
-    {
-
-    }
-
-    void TimelinePoolCallback::onUnPool(Timeline *obj)
-    {
-
-    }
-
-    //TweenPoolCallback *Tween::poolCallback = new TweenPoolCallback();
-    //TweenPool *Tween::pool = new TweenPool(20, Tween::poolCallback);
-    
-    /*
-     private static final Pool<Tween> pool = new Pool<Tween>(20, poolCallback) {
-     @Override protected Tween create() {return new Tween();}
-     };
-     */
-    
-  
 }
