@@ -125,6 +125,15 @@ namespace TweenEngine
         registeredAccessors[type] = accessor;
     }
 
+    void Tween::registerAccessor(std::vector<int> types, TweenAccessorFunc func)
+    {
+        auto accessor = TweenAccessor(new TweenAccessorFunc(func));
+
+        for (int type : types) {
+            registeredAccessors[type] = accessor;
+        }
+    }
+
     TweenPool &Tween::pool = *(new TweenPool());
     std::map<int, TweenAccessor> Tween::registeredAccessors = std::map<int, TweenAccessor>();
     
@@ -684,7 +693,7 @@ namespace TweenEngine
 
         if (accessor != NULL)
         {
-            combinedAttrsCnt = (*accessor)(tweenTarget, type, ACCESSOR_READ, accessorBuffer);
+            combinedAttrsCnt = (*accessor)(tweenTarget, type, TweenCMD::GET, accessorBuffer);
         }
         assert(combinedAttrsCnt <= combinedAttrsLimit);
 		return *this;
@@ -700,7 +709,7 @@ namespace TweenEngine
             return;
         }
 
-        (*accessor)(tweenTarget, type, ACCESSOR_READ, startValues);
+        (*accessor)(tweenTarget, type, TweenCMD::GET, startValues);
         
 		for (int i=0; i<combinedAttrsCnt; i++) {
 			targetValues[i] += isRelative ? startValues[i] : 0;
@@ -725,13 +734,13 @@ namespace TweenEngine
         
 		if (!isIterationStep && step > lastStep)
         {
-            (*accessor)(tweenTarget, type, ACCESSOR_WRITE, isReverse(lastStep) ? startValues : targetValues);
+            (*accessor)(tweenTarget, type, TweenCMD::SET, isReverse(lastStep) ? startValues : targetValues);
 			return;
 		}
         
 		if (!isIterationStep && step < lastStep)
         {
-            (*accessor)(tweenTarget, type, ACCESSOR_WRITE, isReverse(lastStep) ? targetValues : startValues);
+            (*accessor)(tweenTarget, type, TweenCMD::SET, isReverse(lastStep) ? targetValues : startValues);
 			return;
 		}
         
@@ -745,12 +754,12 @@ namespace TweenEngine
         
 		if (duration < 0.00000000001f && delta > -0.00000000001f)
         {
-            (*accessor)(tweenTarget, type, ACCESSOR_WRITE, isReverse(step) ? targetValues : startValues);
+            (*accessor)(tweenTarget, type, TweenCMD::SET, isReverse(step) ? targetValues : startValues);
 			return;
 		}
         
         if (duration < 0.00000000001f && delta < 0.00000000001f) {
-            (*accessor)(tweenTarget, type, ACCESSOR_WRITE, isReverse(step) ? startValues : targetValues);
+            (*accessor)(tweenTarget, type, TweenCMD::SET, isReverse(step) ? startValues : targetValues);
 			return;
 		}
         
@@ -782,7 +791,7 @@ namespace TweenEngine
 			}
 		}
         
-        (*accessor)(tweenTarget, type, ACCESSOR_WRITE, accessorBuffer);
+        (*accessor)(tweenTarget, type, TweenCMD::SET, accessorBuffer);
 	}
 
 	void Tween::forceStartValues()
@@ -791,7 +800,7 @@ namespace TweenEngine
             return;
         }
 
-        (*accessor)(tweenTarget, type, ACCESSOR_WRITE, startValues);
+        (*accessor)(tweenTarget, type, TweenCMD::SET, startValues);
 	}
     
 	void Tween::forceEndValues()
@@ -800,7 +809,7 @@ namespace TweenEngine
             return;
         }
 
-        (*accessor)(tweenTarget, type, ACCESSOR_WRITE, targetValues);
+        (*accessor)(tweenTarget, type, TweenCMD::SET, targetValues);
     }
     
     int Tween::getTweenCount() { return 1; }

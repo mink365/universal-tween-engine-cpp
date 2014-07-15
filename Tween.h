@@ -19,8 +19,13 @@
 
 namespace TweenEngine
 {
+    enum class TweenCMD {
+        GET,
+        SET,
+    };
+
     typedef std::shared_ptr<void> TargetPtr;
-    typedef std::function<int(std::shared_ptr<void>, int tweenType, int cmd, float *values)> TweenAccessorFunc;
+    typedef std::function<int(std::shared_ptr<void>, int tweenType, TweenCMD cmd, float *values)> TweenAccessorFunc;
     typedef std::shared_ptr<TweenAccessorFunc > TweenAccessor;
 
     class TweenPool;
@@ -73,9 +78,6 @@ namespace TweenEngine
         virtual void updateOverride(int step, int lastStep, bool isIterationStep, float delta);
         
     public:
-        static const int ACCESSOR_READ = 0;
-        static const int ACCESSOR_WRITE = 1;
-
         static void setCombinedAttributesLimit(int limit);
         static void setWaypointsLimit(int limit);
         static const char *getVersion();
@@ -84,6 +86,7 @@ namespace TweenEngine
         static void ensurePoolCapacity(int minCapacity);
 
         static void registerAccessor(int type, TweenAccessorFunc);
+        static void registerAccessor(std::vector<int> types, TweenAccessorFunc func);
 
         static Tween &to(TargetPtr target, int tweenType, float duration);
         static Tween &from(TargetPtr target, int tweenType, float duration);
