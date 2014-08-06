@@ -7,6 +7,7 @@
 
 //#define NDEBUG
 #include <assert.h>
+#include <stdlib.h>
 
 #include "BaseTween.h"
 
