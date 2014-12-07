@@ -124,7 +124,7 @@ BaseTween &Timeline::build()
 
     duration = 0;
 
-    for (int i=0; i<children.size(); i++) {
+    for (size_t i=0; i<children.size(); i++) {
         BaseTween* obj = children.at(i);
 
         if (obj->getRepeatCount() < 0) {
@@ -157,7 +157,7 @@ BaseTween &Timeline::start()
 {
     BaseTween::start();
 
-    for (int i=0; i<children.size(); i++) {
+    for (size_t i=0; i<children.size(); i++) {
         BaseTween* obj = children.at(i);
         obj->start();
     }
